@@ -11,9 +11,25 @@ async function robot() {
     sentences: [
       {
         text: "Solid Color",
-        searchTerm: `Solid Color Cat`,
-        pasta: "solid_color",
+        searchTerm: `"white cat"`,
+        pasta: "solid_color_white",
       },
+      {
+        text: "Solid Color",
+        searchTerm: `"black cat"`,
+        pasta: "solid_color_black",
+      },
+      {
+        text: "Solid Color",
+        searchTerm: `"grey cat"`,
+        pasta: "solid_color_grey",
+      },
+      {
+        text: "Solid Color",
+        searchTerm: `"orange cat"`,
+        pasta: "solid_color_orange",
+      },
+      /*
       {
         text: "Tortoiseshell",
         searchTerm: `Tortoiseshell Cat`,
@@ -34,6 +50,7 @@ async function robot() {
         searchTerm: `Blotched Tabby`,
         pasta: "Blotched_Tabby",
       },
+      
       {
         text: "Spotted Tabby",
         searchTerm: `Spotted Tabby Cat`,
@@ -54,7 +71,7 @@ async function robot() {
         searchTerm: `Smoke Cat`,
         pasta: "Smoke",
       },
-      /*
+      
       {
         text: "Shaded",
         searchTerm: `Shaded Cat`,
