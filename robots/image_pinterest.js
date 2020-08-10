@@ -4,9 +4,11 @@ const customSearch = google.customsearch("v1");
 const state = require("./state.js");
 const fs = require("fs");
 
-const googleSearchCredentials = require("../credentials/google-search.json");
+//const googleSearchCredentials = require("../credentials/google-search.json");
 async function robot() {
   //const content = state.load();
+  console.log("Vai baixar do pinterest");
+  process.exit(0);
   const content = {
     sentences: [
       {
@@ -188,7 +190,7 @@ async function robot() {
   }
 
   async function downloadAndSave(url, fileName, pasta) {
-    const dir = "./content/" + pasta;
+    const dir = "./content_pinterest/" + pasta;
 
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
@@ -196,7 +198,7 @@ async function robot() {
     return imageDownloader.image({
       url,
       url,
-      dest: "./content/" + pasta + "/" + fileName,
+      dest: "./content_pinterest/" + pasta + "/" + fileName,
     });
   }
 }

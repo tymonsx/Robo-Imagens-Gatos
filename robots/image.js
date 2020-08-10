@@ -7,6 +7,8 @@ const fs = require("fs");
 const googleSearchCredentials = require("../credentials/google-search.json");
 async function robot() {
   //const content = state.load();
+  console.log("Vai baixar do bing");
+  process.exit(0);
   const content = {
     sentences: [
       {

@@ -4,9 +4,11 @@ const customSearch = google.customsearch("v1");
 const state = require("./state.js");
 const fs = require("fs");
 
-const googleSearchCredentials = require("../credentials/google-search.json");
+//const googleSearchCredentials = require("../credentials/google-search.json");
 async function robot() {
   //const content = state.load();
+  console.log("Vai baixar do bing");
+  process.exit(0);
   const content = {
     sentences: [
       {
@@ -108,7 +110,7 @@ async function robot() {
   await fetchImagesOfAllSentences(content);
 
   await downloadAllImages(content);
-  state.save(content);
+  //state.save(content);
 
   async function fetchImagesOfAllSentences(content) {
     for (const sentence of content.sentences) {
@@ -188,7 +190,7 @@ async function robot() {
   }
 
   async function downloadAndSave(url, fileName, pasta) {
-    const dir = "./content/" + pasta;
+    const dir = "./content_bing/" + pasta;
 
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
@@ -196,7 +198,7 @@ async function robot() {
     return imageDownloader.image({
       url,
       url,
-      dest: "./content/" + pasta + "/" + fileName,
+      dest: "./content_bing/" + pasta + "/" + fileName,
     });
   }
 }
