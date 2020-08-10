@@ -1,19 +1,20 @@
+const https = require("https");
+const unirest = require("unirest");
 const imageDownloader = require("image-downloader");
-const google = require("googleapis").google;
-const customSearch = google.customsearch("v1");
+const bingSearchCredentials = require("../credentials/azure-search.json");
+const bingHost = "api.cognitive.microsoft.com/bing/v7.0/images/search/"; //"api.cognitive.microsoft.com";
+const bingPath = "/bing/v7.0/images/search";
 const state = require("./state.js");
 const fs = require("fs");
-
 //const googleSearchCredentials = require("../credentials/google-search.json");
 async function robot() {
   //const content = state.load();
-  console.log("Vai baixar do bing");
-  process.exit(0);
+
   const content = {
     sentences: [
       {
         text: "Solid Color",
-        searchTerm: `"white cat"`,
+        searchTerm: "white cat",
         pasta: "solid_color_white",
       },
       {
@@ -109,37 +110,63 @@ async function robot() {
 
   await fetchImagesOfAllSentences(content);
 
-  await downloadAllImages(content);
+  //await downloadAllImages(content);
   //state.save(content);
 
   async function fetchImagesOfAllSentences(content) {
+    /*
     for (const sentence of content.sentences) {
-      sentence.images = await fetchGoogleAndReturnImagesLinks(
+      sentence.images = await fetchBingAndReturnImagesLinks(
         sentence.searchTerm
       );
     }
+    */
+    let teste = await fetchBingAndReturnImagesLinks(
+      content.sentences[0].searchTerm
+    );
+    console.log("testou: ", teste);
   }
-  async function fetchGoogleAndReturnImagesLinks(query) {
+  async function fetchBingAndReturnImagesLinks(query) {
     try {
       let imagesUrl = [];
-      for (let i = 1; i < 100; i = i + 10) {
-        const response = await customSearch.cse.list({
-          auth: googleSearchCredentials.apiKey,
-          cx: googleSearchCredentials.searchEngineId,
-          q: query,
-          searchType: "image",
-          start: i,
+      //  for (let i = 1; i < 100; i = i + 10) {
+      let options = {
+        method: "GET",
+        hostname: bingHost,
+        port: null,
+        path: bingPath + "?q=%3${query}%3E",
+        headers: {
+          "x-rapidapi-host": bingHost, //"bing-image-search1.p.rapidapi.com",
+          "x-rapidapi-key": bingSearchCredentials.apiKey2,
+          useQueryString: true,
+        },
+      };
+      let req = https.request(options, function (res) {
+        var chunks = [];
+
+        res.on("data", function (chunk) {
+          chunks.push(chunk);
         });
-        console.log(response);
-        imagesUrl = imagesUrl.concat(
-          response.data.items.map((item) => {
-            return item.link;
-          })
-        );
-      }
-      return imagesUrl;
+
+        res.on("end", function () {
+          var body = Buffer.concat(chunks);
+          console.log(body.toString());
+        });
+      });
+
+      req.end();
+      //console.log("seila: ", req);
+      /*
+      imagesUrl = imagesUrl.concat(
+        response.data.items.map((item) => {
+          return item.link;
+        })
+      );
+      */
+      //}
+      //  return imagesUrl;
     } catch (error) {
-      console.log(response);
+      console.log(error);
     }
   }
   async function downloadAllImages(content) {
