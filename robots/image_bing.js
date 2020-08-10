@@ -1,11 +1,12 @@
-const https = require("https");
+//const https = require("https");
 const unirest = require("unirest");
 const imageDownloader = require("image-downloader");
 const bingSearchCredentials = require("../credentials/azure-search.json");
-const bingHost = "api.cognitive.microsoft.com/bing/v7.0/images/search/"; //"api.cognitive.microsoft.com";
+const bingHost = "api.cognitive.microsoft.com";
 const bingPath = "/bing/v7.0/images/search";
 const state = require("./state.js");
 const fs = require("fs");
+const { promises } = require("dns");
 //const googleSearchCredentials = require("../credentials/google-search.json");
 async function robot() {
   //const content = state.load();
@@ -14,7 +15,7 @@ async function robot() {
     sentences: [
       {
         text: "Solid Color",
-        searchTerm: "white cat",
+        searchTerm: `"white cat"`,
         pasta: "solid_color_white",
       },
       {
@@ -109,111 +110,138 @@ async function robot() {
   };
 
   await fetchImagesOfAllSentences(content);
-
-  //await downloadAllImages(content);
+  // console.log("conteudo: ", content.sentences[0].images);
+  await downloadAllImages(content);
   //state.save(content);
 
   async function fetchImagesOfAllSentences(content) {
+    return new Promise(async (resolve) => {
+      for (const sentence of content.sentences) {
+        sentence.images = await fetchBingAndReturnImagesLinks(
+          sentence.searchTerm
+        );
+      }
+      resolve();
+    });
+
     /*
-    for (const sentence of content.sentences) {
-      sentence.images = await fetchBingAndReturnImagesLinks(
-        sentence.searchTerm
-      );
-    }
-    */
     let teste = await fetchBingAndReturnImagesLinks(
       content.sentences[0].searchTerm
     );
-    console.log("testou: ", teste);
+    */
+    /*
+    fetchBingAndReturnImagesLinks(content.sentences[0].searchTerm).then(
+      (teste) => {
+        console.log("testou: ", teste);
+      }
+    );
+    */
+    // console.log("testou: ", teste);
   }
   async function fetchBingAndReturnImagesLinks(query) {
-    try {
-      let imagesUrl = [];
-      //  for (let i = 1; i < 100; i = i + 10) {
-      let options = {
-        method: "GET",
-        hostname: bingHost,
-        port: null,
-        path: bingPath + "?q=%3${query}%3E",
-        headers: {
-          "x-rapidapi-host": bingHost, //"bing-image-search1.p.rapidapi.com",
-          "x-rapidapi-key": bingSearchCredentials.apiKey2,
-          useQueryString: true,
-        },
-      };
-      let req = https.request(options, function (res) {
-        var chunks = [];
+    return new Promise((resolve, reject) => {
+      try {
+        let imagesUrl = [];
+        //  for (let i = 1; i < 100; i = i + 10) {
 
-        res.on("data", function (chunk) {
-          chunks.push(chunk);
+        let req = unirest(
+          "GET",
+          "https://api.cognitive.microsoft.com/bing/v7.0/images/search"
+        );
+        req.query({
+          q: query,
         });
 
-        res.on("end", function () {
-          var body = Buffer.concat(chunks);
-          console.log(body.toString());
+        req.headers({
+          "Ocp-Apim-Subscription-Key": bingSearchCredentials.apiKey,
         });
-      });
 
-      req.end();
-      //console.log("seila: ", req);
-      /*
+        req.end(function (res) {
+          if (res.error) throw new Error(res.error);
+          imagesUrl = imagesUrl.concat(
+            res.body.value.map((item) => {
+              return item.contentUrl;
+            })
+          );
+          // console.log("imagesUrl: ", imagesUrl);
+          resolve(imagesUrl);
+          //console.log("body: ", res.body);
+          //console.dir(res.body, { depth: null });
+          /*
+        console.log(
+          "teste: ",
+          res.body.value.map((item) => {
+            return item.contentUrl;
+          })
+        );
+        */
+        });
+
+        //console.log("seila: ", req);
+        /*
       imagesUrl = imagesUrl.concat(
         response.data.items.map((item) => {
-          return item.link;
+          return item.contentUrl;
         })
       );
-      */
+
       //}
-      //  return imagesUrl;
-    } catch (error) {
-      console.log(error);
-    }
+      return imagesUrl;
+      */
+      } catch (error) {
+        console.log(error);
+        reject(error);
+      }
+    });
   }
   async function downloadAllImages(content) {
-    content.downloadedImages = [];
+    return new Promise(async (resolve) => {
+      content.downloadedImages = [];
 
-    for (
-      let sentenceIndex = 0;
-      sentenceIndex < content.sentences.length;
-      sentenceIndex++
-    ) {
-      const images = content.sentences[sentenceIndex].images;
+      for (
+        let sentenceIndex = 0;
+        sentenceIndex < content.sentences.length;
+        sentenceIndex++
+      ) {
+        const images = content.sentences[sentenceIndex].images;
 
-      for (let imageIndex = 0; imageIndex < images.length; imageIndex++) {
-        const imageUrl = images[imageIndex];
+        for (let imageIndex = 0; imageIndex < images.length; imageIndex++) {
+          const imageUrl = images[imageIndex];
 
-        try {
-          //await downloadImage()
-          if (content.downloadedImages.includes(imageUrl)) {
-            throw new Error("Imagem já foi baixada");
-          }
-          await downloadAndSave(
-            imageUrl,
-            imageIndex + "-original.png",
-            content.sentences[sentenceIndex].pasta
-          );
-          content.downloadedImages.push(imageUrl);
-          console.log(
-            "[" +
-              sentenceIndex +
-              "] [" +
-              imageIndex +
-              "]> baixou imagem com sucesso: " +
-              imageUrl
-          );
-        } catch (error) {
-          console.log(
-            "[" +
-              sentenceIndex +
-              "] [" +
-              imageIndex +
-              "]> Erro ao baixar imagem: " +
+          try {
+            //await downloadImage()
+            if (content.downloadedImages.includes(imageUrl)) {
+              throw new Error("Imagem já foi baixada");
+            }
+            await downloadAndSave(
               imageUrl,
-            error
-          );
+              imageIndex + "-original.png",
+              content.sentences[sentenceIndex].pasta
+            );
+            content.downloadedImages.push(imageUrl);
+            console.log(
+              "[" +
+                sentenceIndex +
+                "] [" +
+                imageIndex +
+                "]> baixou imagem com sucesso: " +
+                imageUrl
+            );
+          } catch (error) {
+            console.log(
+              "[" +
+                sentenceIndex +
+                "] [" +
+                imageIndex +
+                "]> Erro ao baixar imagem: " +
+                imageUrl,
+              error
+            );
+          }
         }
       }
-    }
+      resolve();
+    });
   }
 
   async function downloadAndSave(url, fileName, pasta) {
