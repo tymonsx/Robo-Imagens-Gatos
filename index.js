@@ -6,9 +6,10 @@ const robots = {
   image: require("./robots/image.js"),
   image_bing: require("./robots/image_bing.js"),
   image_pinterest: require("./robots/image_pinterest.js"),
+  image_pixabay: require("./robots/image_pixabay.js"),
 };
 async function start() {
-  const prefixes = ["google", "bing", "pinterest"];
+  const prefixes = ["google", "bing", "pinterest", "pixabay"];
   const selectPrefixIndex = readLine.keyInSelect(
     prefixes,
     "Escolhe uma Opcao:"
@@ -16,13 +17,16 @@ async function start() {
   switch (selectPrefixIndex) {
     case 0:
       await robots.image();
-      break;
+    break;
     case 1:
       await robots.image_bing();
-      break;
+    break;
     case 2:
       await robots.image_pinterest();
-      break;
+    break;
+    case 3:
+      await robots.image_pixabay();
+    break;
   }
   //  robots.input();
   //  await robots.text();
