@@ -7,8 +7,11 @@ const fs = require("fs");
 const googleSearchCredentials = require("../credentials/google-search.json");
 async function robot() {
   //const content = state.load();
+  // console.log("Vai baixar do bing");
+  //process.exit(0);
   const content = {
     sentences: [
+      /*
       {
         text: "Solid Color",
         searchTerm: `"white cat"`,
@@ -29,7 +32,7 @@ async function robot() {
         searchTerm: `"orange cat"`,
         pasta: "solid_color_orange",
       },
-      /*
+    
       {
         text: "Tortoiseshell",
         searchTerm: `Tortoiseshell Cat`,
@@ -45,38 +48,24 @@ async function robot() {
         searchTerm: `Tabby Mackerel`,
         pasta: "Tabby_Mackerel",
       },
+      
       {
         text: "Blotched Tabby",
         searchTerm: `Blotched Tabby`,
         pasta: "Blotched_Tabby",
       },
-      
+      */
+      {
+        text: "Classic Tabby",
+        searchTerm: `Classic Tabby`,
+        pasta: "Classic_Tabby",
+      },
       {
         text: "Spotted Tabby",
         searchTerm: `Spotted Tabby Cat`,
         pasta: "Spotted_Tabby",
       },
-      {
-        text: "Abyssinian Tabby",
-        searchTerm: `Abyssinian Tabby`,
-        pasta: "Abyssinian_Tabby",
-      },
-      {
-        text: "Patched Tabby",
-        searchTerm: `Patched Tabby Cat`,
-        pasta: "Patched_Tabby",
-      },
-      {
-        text: "Smoke",
-        searchTerm: `Smoke Cat`,
-        pasta: "Smoke",
-      },
-      
-      {
-        text: "Shaded",
-        searchTerm: `Shaded Cat`,
-        pasta: "Shaded",
-      },
+
       {
         text: "Bicolor",
         searchTerm: `Bicolor Cat`,
@@ -88,15 +77,11 @@ async function robot() {
         pasta: "Chinchilla",
       },
       {
-        text: "Harlequin",
-        searchTerm: `Harlequin Cat`,
-        pasta: "Harlequin",
-      },
-      {
         text: "Colorpoint",
         searchTerm: `Colorpoint Cat`,
         pasta: "Colorpoint",
       },
+      /*
        {
         text: "Hairless",
         searchTerm: `Hairless Cat`,
