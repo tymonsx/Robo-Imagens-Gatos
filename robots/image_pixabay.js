@@ -3,7 +3,7 @@ const pixabayApi = require("pixabay-api")
 const state = require("./state.js");
 const fs = require("fs");
 
-const pixabayCredentials = require("../credentials/pixabay.json");
+//const pixabayCredentials = require("../credentials/pixabay.json");
 async function robot() {
 
   const content = {
