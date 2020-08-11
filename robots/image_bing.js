@@ -10,28 +10,29 @@ const { promises } = require("dns");
 //const googleSearchCredentials = require("../credentials/google-search.json");
 async function robot() {
   //const content = state.load();
-
+  let totalEstimatedMatches = 1000;
+  let imagesUrl = [];
   const content = {
     sentences: [
+      /*
       {
         text: "Solid Color",
         searchTerm: `"white cat"`,
         pasta: "solid_color_white",
       },
+      
+
       {
         text: "Solid Color",
         searchTerm: `"black cat"`,
         pasta: "solid_color_black",
       },
+      */
+
       {
         text: "Solid Color",
         searchTerm: `"grey cat"`,
         pasta: "solid_color_grey",
-      },
-      {
-        text: "Solid Color",
-        searchTerm: `"orange cat"`,
-        pasta: "solid_color_orange",
       },
       /*
       {
@@ -39,73 +40,66 @@ async function robot() {
         searchTerm: `Tortoiseshell Cat`,
         pasta: "Tortoiseshell",
       },
+    
       {
         text: "Calico",
         searchTerm: `Calico Cat`,
         pasta: "Calico",
       },
+       
+
       {
         text: "Tabby Mackerel",
         searchTerm: `Tabby Mackerel`,
         pasta: "Tabby_Mackerel",
       },
+      
       {
         text: "Blotched Tabby",
         searchTerm: `Blotched Tabby`,
         pasta: "Blotched_Tabby",
       },
+     
+
+      {
+        text: "Classic Tabby",
+        searchTerm: `Classic Tabby`,
+        pasta: "Classic_Tabby",
+      }, 
       
       {
         text: "Spotted Tabby",
         searchTerm: `Spotted Tabby Cat`,
         pasta: "Spotted_Tabby",
       },
-      {
-        text: "Abyssinian Tabby",
-        searchTerm: `Abyssinian Tabby`,
-        pasta: "Abyssinian_Tabby",
-      },
-      {
-        text: "Patched Tabby",
-        searchTerm: `Patched Tabby Cat`,
-        pasta: "Patched_Tabby",
-      },
-      {
-        text: "Smoke",
-        searchTerm: `Smoke Cat`,
-        pasta: "Smoke",
-      },
       
-      {
-        text: "Shaded",
-        searchTerm: `Shaded Cat`,
-        pasta: "Shaded",
-      },
+
       {
         text: "Bicolor",
         searchTerm: `Bicolor Cat`,
         pasta: "Bicolor",
       },
+      
+
       {
         text: "Chinchilla",
         searchTerm: `Chinchilla Cat`,
         pasta: "Chinchilla",
       },
-      {
-        text: "Harlequin",
-        searchTerm: `Harlequin Cat`,
-        pasta: "Harlequin",
-      },
+     
+
       {
         text: "Colorpoint",
         searchTerm: `Colorpoint Cat`,
         pasta: "Colorpoint",
-      },
-       {
+      }, 
+
+      {
         text: "Hairless",
         searchTerm: `Hairless Cat`,
         pasta: "Hairless",
-      },*/
+      } ,
+      */
     ],
   };
 
@@ -139,25 +133,48 @@ async function robot() {
     // console.log("testou: ", teste);
   }
   async function fetchBingAndReturnImagesLinks(query) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
-        let imagesUrl = [];
-        //  for (let i = 1; i < 100; i = i + 10) {
+        for (let i = 0; i < totalEstimatedMatches; i = i + 150) {
+          await fetchBingAndReturnImagesLinksOffset(query, i);
+        }
+        console.log("imagesUrl: ", imagesUrl);
+        resolve(imagesUrl);
 
+        // return imagesUrl;
+      } catch (error) {
+        console.log(error);
+        reject(error);
+      }
+    });
+  }
+
+  async function fetchBingAndReturnImagesLinksOffset(query, offset) {
+    return new Promise(async (resolve, reject) => {
+      try {
         let req = unirest(
           "GET",
           "https://api.cognitive.microsoft.com/bing/v7.0/images/search"
         );
+        // console.log("i: " + i);
         req.query({
           q: query,
+          count: 150,
+          imageType: "Photo",
+          offset: offset,
         });
 
         req.headers({
           "Ocp-Apim-Subscription-Key": bingSearchCredentials.apiKey,
         });
 
-        req.end(function (res) {
+        await req.end(function (res) {
           if (res.error) throw new Error(res.error);
+          if (totalEstimatedMatches > res.body.totalEstimatedMatches) {
+            totalEstimatedMatches = res.body.totalEstimatedMatches;
+            console.log("Total estimado de imagens: ", totalEstimatedMatches);
+          }
+
           imagesUrl = imagesUrl.concat(
             res.body.value.map((item) => {
               return item.contentUrl;
@@ -165,29 +182,7 @@ async function robot() {
           );
           // console.log("imagesUrl: ", imagesUrl);
           resolve(imagesUrl);
-          //console.log("body: ", res.body);
-          //console.dir(res.body, { depth: null });
-          /*
-        console.log(
-          "teste: ",
-          res.body.value.map((item) => {
-            return item.contentUrl;
-          })
-        );
-        */
         });
-
-        //console.log("seila: ", req);
-        /*
-      imagesUrl = imagesUrl.concat(
-        response.data.items.map((item) => {
-          return item.contentUrl;
-        })
-      );
-
-      //}
-      return imagesUrl;
-      */
       } catch (error) {
         console.log(error);
         reject(error);
