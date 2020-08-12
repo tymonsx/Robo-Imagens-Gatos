@@ -22,17 +22,37 @@ async function robot() {
         text: "Solid Color",
         searchTerm: "grey cat",
         pasta: "solid_color_grey",
-      },
+      }, 
       {
         text: "Solid Color",
         searchTerm: "orange cat",
         pasta: "solid_color_orange",
-      },
+      }, 
+      {
+        text: "Tortoiseshell",
+        searchTerm: "tortoise shell cat",
+        pasta: "Tortoiseshell",
+      }, 
+      {
+        text: "Calico",
+        searchTerm: "tricolor cat",
+        pasta: "Calico",
+      }, 
       {
         text: "Tabby Mackerel",
-        searchTerm: "Tabby Mackerel",
+        searchTerm: "mackerel cat",
         pasta: "Tabby_Mackerel",
-      }
+      },
+      {
+        text: "Bicolor",
+        searchTerm: "Bicolor Cat",
+        pasta: "Bicolor",
+      },
+      {
+        text: "Hairless",
+        searchTerm: "Hairless Cat",
+        pasta: "Hairless",
+      },
     ],
   };
 
@@ -64,7 +84,7 @@ async function robot() {
           if(response.totalHits < 100) {
             j = response.totalHits;
           }
-          for(let i = 0; i < 100; i++) {
+          for(let i = 0; i < j; i++) {
             imagesUrl.push(response.hits[i].largeImageURL);
           }
         }
