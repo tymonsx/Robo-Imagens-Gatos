@@ -1,28 +1,18 @@
 {
-  "name": "video_maker",
+  "name": "robo_gatos",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tymonsx/video_maker.git"
-  },
-  "author": "Antonio Carlos da Silva Junior (tymonsx@hotmail.com)",
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tymonsx/video_maker/issues"
-  },
-  "homepage": "https://github.com/tymonsx/video_maker#readme",
   "dependencies": {
-    "algorithmia": "^0.3.10",
-    "googleapis": "^58.0.0",
-    "image-downloader": "^4.0.1",
+    "googleapis": "^67.0.0",
+    "image-downloader": "^4.0.2",
+    "pixabay-api": "^1.0.4",
     "readline-sync": "^1.4.10",
-    "sbd": "^1.0.18",
-    "unirest": "^0.6.0",
-    "watson-developer-cloud": "^4.0.1"
+    "unirest": "^0.6.0"
   }
 }

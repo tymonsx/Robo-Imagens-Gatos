@@ -1,37 +1,29 @@
 const readLine = require("readLine-sync");
-const robots = {
-  // input: require("./robots/input.js"),
-  // text: require("./robots/text.js"),
-  state: require("./robots/state.js"),
-  image: require("./robots/image.js"),
-  image_bing: require("./robots/image_bing.js"),
-  image_pinterest: require("./robots/image_pinterest.js"),
-  image_pixabay: require("./robots/image_pixabay.js"),
-};
-async function start() {
-  const prefixes = ["google", "bing", "pinterest", "pixabay"];
-  const selectPrefixIndex = readLine.keyInSelect(
-    prefixes,
-    "Escolhe uma Opcao:"
-  );
-  switch (selectPrefixIndex) {
-    case 0:
-      await robots.image();
-    break;
-    case 1:
-      await robots.image_bing();
-    break;
-    case 2:
-      await robots.image_pinterest();
-    break;
-    case 3:
-      await robots.image_pixabay();
-    break;
-  }
-  //  robots.input();
-  //  await robots.text();
-
-  const content = robots.state.load();
-  //console.dir(content, { depth: null });
+const robos = {
+  google_image: require("./robos/google.js"),
+  bing_image: require("./robos/bing.js"),
+  pixabay_image: require("./robos/pixabay.js"),
 }
-start();
+async function start() {
+    const opcoes = ["google", "bing", "pixabay"];
+    const opcaoSelecionada = readLine.keyInSelect(
+    opcoes,
+    "Escolha uma Opcao: "
+    );
+    switch (opcaoSelecionada) {
+    case 0:
+        console.log('google selecionado');
+        await robos.google_image();
+        break;              
+    case 1:
+        console.log('bing selecionado');
+        await robos.bing_image();
+        break;
+    case 2:
+        console.log('pixabay selecionado');
+        await robos.pixabay_image();
+    break;    
+  
+  }
+}
+start();   
